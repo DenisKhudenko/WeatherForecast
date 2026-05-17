@@ -16,12 +16,14 @@ builder.Services.AddDbContext<AppDBContext>(options =>
         b => b.MigrationsAssembly("WeatherForecastWeb.DAL")
     ));
 
-
 // DI для DAL и BL
 builder.Services.AddScoped<IWeatherForecastWebRepository, WeatherForecastWebRepository>();
 builder.Services.AddScoped<IWeatherForecastWebService, WeatherForecastWebService>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<ICityService, CityService>();
 
 builder.Services.AddControllers().AddApplicationPart(typeof(WeatherForecastWebController).Assembly);
+builder.Services.AddControllers().AddApplicationPart(typeof(CityController).Assembly);
 //builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

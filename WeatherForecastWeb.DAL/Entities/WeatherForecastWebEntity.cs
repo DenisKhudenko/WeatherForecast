@@ -10,6 +10,8 @@
 
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 
-        public string? City { get; set; }
+        public int CityId { get; set; }
+
+        public CityEntity? City { get; set; }
     }
 }

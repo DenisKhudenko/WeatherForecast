@@ -11,7 +11,9 @@ public class WeatherForecastWebDTO
 
     public int TemperatureF { get; set; }
 
-    public string? City { get; set; }
+    public int CityId { get; set; }
+
+    public string City { get; set; }
 }
 
 public class CreateWeatherForecastWebDTO
@@ -20,5 +22,5 @@ public class CreateWeatherForecastWebDTO
 
     public int TemperatureC { get; set; }
 
-    public string? City { get; set; }
+    public int CityId { get; set; }
 }

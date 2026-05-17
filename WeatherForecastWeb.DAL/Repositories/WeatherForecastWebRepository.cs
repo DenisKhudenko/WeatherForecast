@@ -15,10 +15,26 @@ public class WeatherForecastWebRepository : IWeatherForecastWebRepository
     }
 
     public async Task<IEnumerable<WeatherForecastWebEntity>> GetList()
-        => await _context.WeatherForecasts.ToListAsync();
+    {
+        return await _context.WeatherForecasts
+            .Include(entity => entity.City)
+            .ToListAsync();
+    }
 
     public async Task<WeatherForecastWebEntity?> GetById(int id)
-        => await _context.WeatherForecasts.FindAsync(id);
+    {
+        return await _context.WeatherForecasts
+            .Include(entity => entity.City)
+            .FirstOrDefaultAsync(entity => entity.Id == id);
+    }
+
+    public async Task<List<WeatherForecastWebEntity>> GetByCityId(int cityId)
+    {
+        return await _context.WeatherForecasts
+            .Include(entity => entity.City)
+            .Where(entity => entity.CityId == cityId)
+            .ToListAsync();
+    }
 
     public async Task<WeatherForecastWebEntity> Create(WeatherForecastWebEntity entity)
     {

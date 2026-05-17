@@ -10,12 +10,14 @@ namespace WeatherForecastWeb.DAL
 
         public DbSet<WeatherForecastWebEntity> WeatherForecasts => Set<WeatherForecastWebEntity>();
 
+        public DbSet<CityEntity> City => Set<CityEntity>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WeatherForecastWebEntity>(entity =>
-            {  
-                entity.HasKey(key => key.Id);
-            });
+            modelBuilder.Entity<WeatherForecastWebEntity>()
+                .HasOne(entity => entity.City)
+                .WithMany()
+                .HasForeignKey(entity => entity.CityId);
         }
     }
 }

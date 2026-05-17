@@ -1,4 +1,5 @@
 ﻿using WeatherForecastWeb.BLL.DTO;
+using WeatherForecastWeb.DAL.Entities;
 
 namespace WeatherForecastWeb.BL.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace WeatherForecastWeb.BL.Services.Interfaces
 
         Task<WeatherForecastWebDTO?> GetById(int id);
 
-        Task<WeatherForecastWebDTO?> GetUnfairResultById(int id);
+        Task<IEnumerable<WeatherForecastWebDTO>> GetByCityId(int cityId);
 
         Task<WeatherForecastWebDTO> Create(CreateWeatherForecastWebDTO dto);
 

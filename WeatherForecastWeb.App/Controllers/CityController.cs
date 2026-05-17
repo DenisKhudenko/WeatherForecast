@@ -6,12 +6,12 @@ using WeatherForecastWeb.BLL.DTO;
 namespace WeatherForecastWeb.App.Controllers;
 
 [ApiController]
-[Route("weatherForecast")]
-public class WeatherForecastWebController : ControllerBase
+[Route("city")]
+public class CityController : ControllerBase
 {
-    private readonly IWeatherForecastWebService _service;
+    private readonly ICityService _service;
 
-    public WeatherForecastWebController(IWeatherForecastWebService service)
+    public CityController(ICityService service)
     {
         _service = service;
     }
@@ -27,23 +27,15 @@ public class WeatherForecastWebController : ControllerBase
         return result is null ? NotFound() : Ok(result);
     }
 
-    [HttpGet("city/{cityId}")]
-    public async Task<IActionResult> GetByCityId(int cityId)
-    {
-        var result = await _service.GetByCityId(cityId);
-        return Ok(result);
-    }
-
-
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateWeatherForecastWebDTO dto)
+    public async Task<IActionResult> Create([FromBody] CreateCityDTO dto)
     {
         var created = await _service.Create(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CreateWeatherForecastWebDTO dto)
+    public async Task<IActionResult> Update(int id, [FromBody] CreateCityDTO dto)
     {
         var updated = await _service.Update(id, dto);
         return updated is null ? NotFound() : Ok(updated);
