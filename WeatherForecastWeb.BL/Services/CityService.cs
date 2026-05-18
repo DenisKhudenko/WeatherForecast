@@ -15,10 +15,10 @@ public class CityService : ICityService
         _repository = repository;
     }
 
-    public async Task<IEnumerable<CityDTO>> GetList()
+    public async Task<IReadOnlyCollection<CityDTO>> GetList()
     {
         var entities = await _repository.GetList();
-        return entities.Select(MapToDto);
+        return entities.Select(MapToDto).ToList();
     }
 
     public async Task<CityDTO?> GetById(int id)

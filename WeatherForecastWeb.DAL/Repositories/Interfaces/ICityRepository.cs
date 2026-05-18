@@ -4,7 +4,7 @@ namespace WeatherForecastWeb.DAL.Repositories.Interfaces
 {
     public interface ICityRepository
     {
-        Task<IEnumerable<CityEntity>> GetList();
+        Task<IReadOnlyCollection<CityEntity>> GetList();
 
         Task<CityEntity?> GetById(int id);
 

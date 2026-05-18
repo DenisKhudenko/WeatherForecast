@@ -31,9 +31,8 @@ public class WeatherForecastWebController : ControllerBase
     public async Task<IActionResult> GetByCityId(int cityId)
     {
         var result = await _service.GetByCityId(cityId);
-        return Ok(result);
+        return result is null ? NotFound() : Ok(result);
     }
-
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateWeatherForecastWebDTO dto)

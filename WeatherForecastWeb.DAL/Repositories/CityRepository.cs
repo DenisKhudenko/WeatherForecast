@@ -14,7 +14,7 @@ namespace WeatherForecastWeb.DAL.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<CityEntity>> GetList()
+        public async Task<IReadOnlyCollection<CityEntity>> GetList()
             => await _context.City.ToListAsync();
 
         public async Task<CityEntity?> GetById(int id)

@@ -9,7 +9,7 @@ namespace WeatherForecastWeb.DAL.Repositories.Interfaces
 
         Task<WeatherForecastWebEntity?> GetById(int id);
 
-        Task<List<WeatherForecastWebEntity>> GetByCityId(int cityId);
+        Task<IEnumerable<WeatherForecastWebEntity>> GetByCityId(int cityId);
 
         Task<WeatherForecastWebEntity> Create(WeatherForecastWebEntity entity);
 

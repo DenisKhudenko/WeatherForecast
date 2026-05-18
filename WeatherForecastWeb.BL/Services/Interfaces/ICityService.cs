@@ -4,7 +4,7 @@ namespace WeatherForecastWeb.BL.Services.Interfaces
 {
     public interface ICityService
     {
-        Task<IEnumerable<CityDTO>> GetList();
+        Task<IReadOnlyCollection<CityDTO>> GetList();
 
         Task<CityDTO?> GetById(int id);
 

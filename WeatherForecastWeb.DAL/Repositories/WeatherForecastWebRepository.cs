@@ -28,7 +28,7 @@ public class WeatherForecastWebRepository : IWeatherForecastWebRepository
             .FirstOrDefaultAsync(entity => entity.Id == id);
     }
 
-    public async Task<List<WeatherForecastWebEntity>> GetByCityId(int cityId)
+    public async Task<IEnumerable<WeatherForecastWebEntity>> GetByCityId(int cityId)
     {
         return await _context.WeatherForecasts
             .Include(entity => entity.City)
