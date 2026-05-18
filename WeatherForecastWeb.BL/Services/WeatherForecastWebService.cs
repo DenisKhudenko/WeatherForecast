@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.BLL.DTO;
 using WeatherForecastWeb.DAL.Entities;
@@ -21,10 +22,16 @@ public class WeatherForecastWebService : IWeatherForecastWebService
         _cityRepository = cityRepository;
     }
 
-    public async Task<IEnumerable<WeatherForecastWebDTO>> GetList()
+    public async Task<IEnumerable<WeatherForecastWebDTO>> GetList(bool? isTodayWeather)
     {
         var entities = await _repository.GetList();
-        return entities.Select(MapToDto);
+
+        if (isTodayWeather == true)
+        {
+            entities = entities.Where(value => value.Date == DateOnly.FromDateTime(DateTime.Now));
+        }
+
+        return entities.Select(MapToDto).ToList();
     }
 
     public async Task<WeatherForecastWebDTO?> GetById(int id)
@@ -36,17 +43,16 @@ public class WeatherForecastWebService : IWeatherForecastWebService
     public async Task<IEnumerable<WeatherForecastWebDTO>> GetByCityId(int cityId)
     {
         var city = await _cityRepository.GetById(cityId);
-        if (city == null) throw new Exception("City not found");
+        if (city == null) throw new Exception("City not found, enter valid value");
 
         var entities = await _repository.GetByCityId(cityId);
         return entities.Select(e => MapToDto(e));
     }
 
-
     public async Task<WeatherForecastWebDTO> Create(CreateWeatherForecastWebDTO dto)
     {
         var city = await _cityRepository.GetById(dto.CityId);
-        if (city == null) throw new Exception("City not found");
+        if (city == null) throw new Exception("City not found, create city before creating weather forecast");
 
         var entity = new WeatherForecastWebEntity
         {
@@ -61,8 +67,8 @@ public class WeatherForecastWebService : IWeatherForecastWebService
 
     public async Task<WeatherForecastWebDTO?> Update(int id, CreateWeatherForecastWebDTO dto)
     {
-        var city = await _cityRepository.GetById(dto.CityId);
-        if (city == null) throw new Exception("City not found");
+        var city = await _cityRepository.GetById(id);
+        if (city == null) throw new Exception("City not found, enter valid value");
 
         var entity = new WeatherForecastWebEntity
         {
@@ -90,15 +96,19 @@ public class WeatherForecastWebService : IWeatherForecastWebService
         return (32 + (int)(temperatureC / 0.5556));
     }
 
-    private static WeatherForecastWebDTO MapToDto(WeatherForecastWebEntity entity) => new()
+    private static WeatherForecastWebDTO MapToDto(WeatherForecastWebEntity entity)
     {
-        Id = entity.Id,
-        Date = entity.Date,
-        TemperatureC = CheckAndChangeTemp(entity.TemperatureC),
-        TemperatureF = getTemperatureF(entity.TemperatureC),
-        CityId = entity.City.Id,
-        City = entity.City.Name
-    };
+        var TemperatureC = CheckAndChangeTemp(entity.TemperatureC);
+        var TemperatureF = getTemperatureF(TemperatureC);
+        return new()
+        {
+            Id = entity.Id,
+            Date = entity.Date,
+            TemperatureC = TemperatureC,
+            TemperatureF = TemperatureF,
+            City = entity.City.ToString()
+        };
+    }
 
 }
 

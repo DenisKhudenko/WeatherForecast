@@ -5,7 +5,7 @@ namespace WeatherForecastWeb.BL.Services.Interfaces
 {
     public interface IWeatherForecastWebService
     {
-        Task<IEnumerable<WeatherForecastWebDTO>> GetList();
+        Task<IEnumerable<WeatherForecastWebDTO>> GetList(bool? isTodayWeather);
 
         Task<WeatherForecastWebDTO?> GetById(int id);
 

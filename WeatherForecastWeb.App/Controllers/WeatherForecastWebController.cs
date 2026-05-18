@@ -17,8 +17,8 @@ public class WeatherForecastWebController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList()
-        => Ok(await _service.GetList());
+    public async Task<IActionResult> GetList([FromQuery] bool? isTodayWeather)
+        => Ok(await _service.GetList(isTodayWeather));
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
