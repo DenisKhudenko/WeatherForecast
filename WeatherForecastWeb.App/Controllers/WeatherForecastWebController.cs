@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.BLL.DTO;
 
-namespace WeatherForecastWeb.App.Controllers;
+namespace WeatherForecastWeb.API.Controllers;
 
 [ApiController]
 [Route("weatherForecast")]

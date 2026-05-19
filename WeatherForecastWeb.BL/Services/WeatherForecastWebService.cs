@@ -22,7 +22,7 @@ public class WeatherForecastWebService : IWeatherForecastWebService
         _cityRepository = cityRepository;
     }
 
-    public async Task<IEnumerable<WeatherForecastWebDTO>> GetList(bool? isTodayWeather)
+    public async Task<IReadOnlyCollection<WeatherForecastWebDTO>> GetList(bool? isTodayWeather)
     {
         var entities = await _repository.GetList();
 

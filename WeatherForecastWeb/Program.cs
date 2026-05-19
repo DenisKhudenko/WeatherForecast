@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WeatherForecastWeb.App.Controllers;
+using WeatherForecastWeb.API.Controllers;
 using WeatherForecastWeb.BL.Services;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.DAL;
