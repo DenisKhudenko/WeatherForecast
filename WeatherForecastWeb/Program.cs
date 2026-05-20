@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 using WeatherForecastWeb.BL.Services;
 using WeatherForecastWeb.BL.Services.Interfaces;
@@ -31,10 +33,17 @@ builder.Services.AddEndpointsApiExplorer();
 // Описание swagger для возможности более тонко настраивать описание методов
 builder.Services.AddSwaggerGen(swagger =>
 {
-    swagger.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "WeatherForecastWeb",
-        Version = "v1"
+swagger.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+{
+    Title = "WeatherForecastWeb",
+    Version = "v1"
+});
+
+    // Выполняем маппинг типов, без этого дата отображается в виде отдельных полей "year", "month", "day", "dayOfWeek"
+    swagger.MapType<DateOnly>(() => new OpenApiSchema{
+        Type = "string",
+        Format = "date",
+        Example = new OpenApiString($"{DateTime.Now:yyyy-MM-dd}")
     });
 
     // Включение генерации summary в UI Swagger
