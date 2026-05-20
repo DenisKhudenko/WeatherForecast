@@ -13,7 +13,7 @@ namespace WeatherForecastWeb.BL.Services.Interfaces
 
         Task<WeatherForecastWebDTO> Create(CreateWeatherForecastWebDTO dto);
 
-        Task<WeatherForecastWebDTO?> Update(int id, CreateWeatherForecastWebDTO dto);
+        Task<WeatherForecastWebDTO?> Update(int id, CreateWeatherForecastWebDTO dto, CityEntity? city = null);
 
         Task<bool> Delete(int id);
     }

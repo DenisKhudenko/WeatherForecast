@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WeatherForecastWeb.DAL;
 using WeatherForecastWeb.DAL.Entities;
 using WeatherForecastWeb.DAL.Repositories.Interfaces;
 
@@ -65,5 +64,11 @@ public class WeatherForecastWebRepository : IWeatherForecastWebRepository
         await _context.SaveChangesAsync();
         return true;
     }
-}
 
+    public async Task<WeatherForecastWebEntity?> hasDateByCity(DateOnly date, CityEntity city)
+    {
+        return await _context.WeatherForecasts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(value => value.Date == date && value.City == city);
+    }
+}

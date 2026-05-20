@@ -1,5 +1,4 @@
-﻿
-using WeatherForecastWeb.DAL.Entities;
+﻿using WeatherForecastWeb.DAL.Entities;
 
 namespace WeatherForecastWeb.DAL.Repositories.Interfaces
 {
@@ -16,5 +15,7 @@ namespace WeatherForecastWeb.DAL.Repositories.Interfaces
         Task<WeatherForecastWebEntity?> Update(WeatherForecastWebEntity entity);
 
         Task<bool> Delete(int id);
+
+        Task<WeatherForecastWebEntity?> hasDateByCity(DateOnly date, CityEntity city);
     }
 }

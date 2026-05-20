@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.BLL.DTO;
 using WeatherForecastWeb.DAL.Entities;
@@ -57,25 +56,16 @@ public class WeatherForecastWebService : IWeatherForecastWebService
 
     public async Task<WeatherForecastWebDTO> Create(CreateWeatherForecastWebDTO dto)
     {
-        // Если уже существует прогноз по городу за переданную дату, то просто обновляем данные
-        var query = await _repository.GetList();
-
-        var hasValue = query
-            .Where(value => value.CityId == dto.CityId)
-            .Where(value => value.Date == dto.Date)
-            .Select(value => new
-            {
-                Id = value.Id
-            })
-            .FirstOrDefault();
-
-        if (hasValue != null)
-        {
-            return await Update(hasValue.Id, dto);
-        }
-
         var city = await _cityRepository.GetById(dto.CityId);
         if (city == null) throw new Exception("City not found, create city before creating weather forecast");
+
+        // Если уже существует прогноз по городу за переданную дату, то просто обновляем данные
+        var value = await _repository.hasDateByCity(dto.Date, city);
+
+        if (value != null)
+        {
+            return await Update(value.Id, dto, city);
+        }
 
         var entity = new WeatherForecastWebEntity
         {
@@ -88,10 +78,15 @@ public class WeatherForecastWebService : IWeatherForecastWebService
         return MapToDto(created);
     }
 
-    public async Task<WeatherForecastWebDTO?> Update(int id, CreateWeatherForecastWebDTO dto)
+    public async Task<WeatherForecastWebDTO?> Update(int id
+        , CreateWeatherForecastWebDTO dto
+        , CityEntity? city = null)
     {
-        var city = await _cityRepository.GetById(dto.CityId);
-        if (city == null) throw new Exception("City not found, enter valid value");
+        if (city == null)
+        {
+            city = await _cityRepository.GetById(dto.CityId);
+            if (city == null) throw new Exception("City not found, enter valid value");
+        }
 
         var entity = new WeatherForecastWebEntity
         {
