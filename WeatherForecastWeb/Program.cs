@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using WeatherForecastWeb.BL.Services;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.DAL;
+using WeatherForecastWeb.DAL.Extensions;
 using WeatherForecastWeb.DAL.Repositories;
 using WeatherForecastWeb.DAL.Repositories.Interfaces;
-using WeatherForecastWeb.DAL.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,18 +27,36 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Описание swagger для возможности более тонко настраивать описание методов
+builder.Services.AddSwaggerGen(swagger =>
+{
+    swagger.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "WeatherForecastWeb",
+        Version = "v1"
+    });
+
+    // Включение генерации summary в UI Swagger
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    // Может упасть, если не находит файл, на всякий случай проверим его существование
+    if (File.Exists(xmlPath))
+    {
+        swagger.IncludeXmlComments(xmlPath);
+    }
+});
 
 var app = builder.Build();
-
-// Auto migration
-app.UseWeatherForecastWeb();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(swagger =>
+    {
+        swagger.SwaggerEndpoint("/swagger/v1/swagger.json", "WeatherForecastWeb v1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -45,5 +64,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Авто обновление после миграций
+app.UseWeatherForecastWeb();
 
 app.Run();

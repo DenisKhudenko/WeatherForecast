@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using WeatherForecastWeb.BL.Extensions;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.BLL.DTO;
 using WeatherForecastWeb.DAL.Entities;
@@ -11,9 +12,6 @@ public class WeatherForecastWebService : IWeatherForecastWebService
     private readonly IWeatherForecastWebRepository _repository;
     private readonly ICityRepository _cityRepository;
 
-    private static readonly int _hotTemp = 26;
-    private static readonly int _coldTemp = 15;
-
     public WeatherForecastWebService(IWeatherForecastWebRepository repository
         , ICityRepository cityRepository)
     {
@@ -25,7 +23,7 @@ public class WeatherForecastWebService : IWeatherForecastWebService
     {
         var entities = await _repository.GetList();
 
-        // Если передан параметр запроса isTodayWeather в истине, то отображаем прогноз только за сегодня
+        // Если передан параметр запроса isTodayWeather = true, то отображаем прогноз только за сегодня
         if (isTodayWeather == true)
         {
             entities = entities
@@ -36,22 +34,22 @@ public class WeatherForecastWebService : IWeatherForecastWebService
             .OrderBy(value => value.CityId)
             .OrderByDescending(value => value.Date);
 
-        return entities.Select(MapToDto).ToList();
+        return entities.Select(value => value.MapToDTO()).ToList();
     }
 
     public async Task<WeatherForecastWebDTO?> GetById(int id)
     {
         var entity = await _repository.GetById(id);
-        return entity is null ? null : MapToDto(entity);
+        return entity is null ? null : entity.MapToDTO();
     }
 
-    public async Task<IEnumerable<WeatherForecastWebDTO>> GetByCityId(int cityId)
+    public async Task<IReadOnlyCollection<WeatherForecastWebDTO>> GetByCityId(int cityId)
     {
         var city = await _cityRepository.GetById(cityId);
         if (city == null) throw new Exception("City not found, enter valid value");
 
         var entities = await _repository.GetByCityId(cityId);
-        return entities.Select(e => MapToDto(e)).ToList();
+        return entities.Select(entity => entity.MapToDTO()).ToList();
     }
 
     public async Task<WeatherForecastWebDTO> Create(CreateWeatherForecastWebDTO dto)
@@ -62,10 +60,7 @@ public class WeatherForecastWebService : IWeatherForecastWebService
         // Если уже существует прогноз по городу за переданную дату, то просто обновляем данные
         var value = await _repository.hasDateByCity(dto.Date, city);
 
-        if (value != null)
-        {
-            return await Update(value.Id, dto, city);
-        }
+        if (value != null) return await Update(value.Id, dto, city);
 
         var entity = new WeatherForecastWebEntity
         {
@@ -75,10 +70,10 @@ public class WeatherForecastWebService : IWeatherForecastWebService
         };
 
         var created = await _repository.Create(entity);
-        return MapToDto(created);
+        return created.MapToDTO();
     }
 
-    public async Task<WeatherForecastWebDTO?> Update(int id
+    public async Task<WeatherForecastWebDTO> Update(int id
         , CreateWeatherForecastWebDTO dto
         , CityEntity? city = null)
     {
@@ -96,42 +91,10 @@ public class WeatherForecastWebService : IWeatherForecastWebService
             City = city
         };
         var updated = await _repository.Update(entity);
-        return updated is null ? null : MapToDto(updated);
+        return updated.MapToDTO();
     }
 
     public async Task<bool> Delete(int id)
         => await _repository.Delete(id);
-
-    // Если температура больше равна hot или меньше равна cold, выдаем нечестный результат рандом между cold и hot
-    private static int CheckAndChangeTemp(int temp)
-    {
-        if(temp >= _hotTemp || temp <= _coldTemp)
-        {
-            Random random = new Random();
-            temp = random.Next(_coldTemp + 1, _hotTemp - 1);
-        }
-        
-        return temp;
-    }
-
-    private static int getTemperatureF(int temperatureC)
-    {
-        return (32 + (int)(temperatureC / 0.5556));
-    }
-
-    private static WeatherForecastWebDTO MapToDto(WeatherForecastWebEntity entity)
-    {
-        var TemperatureC = CheckAndChangeTemp(entity.TemperatureC);
-        var TemperatureF = getTemperatureF(TemperatureC);
-        return new()
-        {
-            Id = entity.Id,
-            Date = entity.Date,
-            TemperatureC = TemperatureC,
-            TemperatureF = TemperatureF,
-            City = entity.City.ToString()
-        };
-    }
-
 }
 

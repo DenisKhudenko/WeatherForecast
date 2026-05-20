@@ -9,7 +9,7 @@ namespace WeatherForecastWeb.BL.Services.Interfaces
 
         Task<WeatherForecastWebDTO?> GetById(int id);
 
-        Task<IEnumerable<WeatherForecastWebDTO>> GetByCityId(int cityId);
+        Task<IReadOnlyCollection<WeatherForecastWebDTO>> GetByCityId(int cityId);
 
         Task<WeatherForecastWebDTO> Create(CreateWeatherForecastWebDTO dto);
 

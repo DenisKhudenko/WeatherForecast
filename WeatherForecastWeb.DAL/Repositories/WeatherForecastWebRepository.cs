@@ -16,6 +16,7 @@ public class WeatherForecastWebRepository : IWeatherForecastWebRepository
     public async Task<IEnumerable<WeatherForecastWebEntity>> GetList()
     {
         return await _context.WeatherForecasts
+            .AsNoTracking()
             .Include(entity => entity.City)
             .ToListAsync();
     }
@@ -23,6 +24,7 @@ public class WeatherForecastWebRepository : IWeatherForecastWebRepository
     public async Task<WeatherForecastWebEntity?> GetById(int id)
     {
         return await _context.WeatherForecasts
+            .AsNoTracking()
             .Include(entity => entity.City)
             .FirstOrDefaultAsync(entity => entity.Id == id);
     }
@@ -30,6 +32,7 @@ public class WeatherForecastWebRepository : IWeatherForecastWebRepository
     public async Task<IEnumerable<WeatherForecastWebEntity>> GetByCityId(int cityId)
     {
         return await _context.WeatherForecasts
+            .AsNoTracking()
             .Include(entity => entity.City)
             .Where(entity => entity.CityId == cityId)
             .ToListAsync();

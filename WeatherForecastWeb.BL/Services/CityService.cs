@@ -1,8 +1,10 @@
 ﻿using System.Data;
+using WeatherForecastWeb.BL.Extensions;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.BLL.DTO;
 using WeatherForecastWeb.DAL.Entities;
 using WeatherForecastWeb.DAL.Repositories.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WeatherForecastWeb.BL.Services;
 
@@ -18,13 +20,13 @@ public class CityService : ICityService
     public async Task<IReadOnlyCollection<CityDTO>> GetList()
     {
         var entities = await _repository.GetList();
-        return entities.Select(MapToDto).ToList();
+        return entities.Select(value => value.MapToDTO()).ToList();
     }
 
     public async Task<CityDTO?> GetById(int id)
     {
         var entity = await _repository.GetById(id);
-        return entity is null ? null : MapToDto(entity);
+        return entity is null ? null : entity.MapToDTO();
     }
 
     public async Task<CityDTO> Create(CreateCityDTO dto)
@@ -35,7 +37,7 @@ public class CityService : ICityService
         };
 
         var created = await _repository.Create(entity);
-        return MapToDto(created);
+        return created.MapToDTO();
     }
 
     public async Task<CityDTO?> Update(int id, CreateCityDTO dto)
@@ -46,17 +48,10 @@ public class CityService : ICityService
             Name = dto.Name
         };
         var updated = await _repository.Update(entity);
-        return updated is null ? null : MapToDto(updated);
+        return updated.MapToDTO();
     }
 
     public async Task<bool> Delete(int id)
         => await _repository.Delete(id);
-
-    private static CityDTO MapToDto(CityEntity entity) => new()
-    {
-        Id = entity.Id,
-        Name = entity.Name,
-    };
-
 }
 
