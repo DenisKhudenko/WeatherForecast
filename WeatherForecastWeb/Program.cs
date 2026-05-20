@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using WeatherForecastWeb.API.Controllers;
 using WeatherForecastWeb.BL.Services;
 using WeatherForecastWeb.BL.Services.Interfaces;
 using WeatherForecastWeb.DAL;
 using WeatherForecastWeb.DAL.Repositories;
 using WeatherForecastWeb.DAL.Repositories.Interfaces;
+using WeatherForecastWeb.DAL.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,15 +22,16 @@ builder.Services.AddScoped<IWeatherForecastWebService, WeatherForecastWebService
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<ICityService, CityService>();
 
-builder.Services.AddControllers().AddApplicationPart(typeof(WeatherForecastWebController).Assembly);
-builder.Services.AddControllers().AddApplicationPart(typeof(CityController).Assembly);
-//builder.Services.AddControllers();
+builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Auto migration
+app.UseWeatherForecastWeb();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

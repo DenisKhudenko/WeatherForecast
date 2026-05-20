@@ -127,7 +127,7 @@ public class WeatherForecastWebService : IWeatherForecastWebService
     private static WeatherForecastWebDTO MapToDto(WeatherForecastWebEntity entity)
     {
         var TemperatureC = CheckAndChangeTemp(entity.TemperatureC);
-        var TemperatureF = (TemperatureC != entity.TemperatureC) ? entity.TemperatureF : getTemperatureF(TemperatureC);
+        var TemperatureF = getTemperatureF(TemperatureC);
         return new()
         {
             Id = entity.Id,
